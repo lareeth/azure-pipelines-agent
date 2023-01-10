@@ -1,23 +1,31 @@
 FROM ubuntu:20.04
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
-    apt-transport-https \
-    apt-utils \
-    ca-certificates \
-    curl \
-    git \
-    iputils-ping \
-    jq \
-    lsb-release \
-    software-properties-common
+RUN apt-get update && \
+    apt-get upgrade -y
 
-RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+RUN apt-get install -y -qq --no-install-recommends \
+        apt-transport-https \
+        apt-utils \
+        ca-certificates \
+        curl \
+        wget \
+        git \
+        iputils-ping \
+        jq \
+        lsb-release \
+        software-properties-common && \
+    rm -rf /var/lib/apt/lists/*
 
-# Can be 'linux-x64', 'linux-arm64', 'linux-arm', 'rhel.6-x64'.
-ENV TARGETARCH=linux-x64
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
+    dpkg -i packages-microsoft-prod.deb && \
+    apt-get update && \
+    apt-get install -y dotnet-sdk-6.0 && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /azp
 
