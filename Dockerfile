@@ -27,6 +27,14 @@ RUN wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-p
     apt-get install -y dotnet-sdk-6.0 && \
     rm -rf /var/lib/apt/lists/*
 
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+	install kubectl /usr/bin/kubectl && \
+	rm -rf kubectl
+
+RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
+	HELM_INSTALL_DIR=/usr/bin bash ./get_helm.sh && \
+	rm -rf get_helm.sh
+
 WORKDIR /azp
 
 COPY ./start.sh .
