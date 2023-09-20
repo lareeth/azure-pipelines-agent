@@ -27,6 +27,12 @@ RUN dnf -y swap curl-minimal curl && \
     rm -rf /var/cache/yum
 
 RUN dnf install -y \
+		podman \
+		podman-docker && \
+    dnf clean all && \
+    rm -rf /var/cache/yum
+
+RUN dnf install -y \
 		azure-cli \
     	dotnet-sdk-6.0 && \
     dnf clean all && \
