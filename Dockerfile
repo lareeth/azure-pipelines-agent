@@ -1,38 +1,43 @@
-FROM ubuntu:20.04
+FROM rockylinux:9
 
-ENV DEBIAN_FRONTEND=noninteractive
+ARG TARGETARCH
 
-RUN apt-get update && \
-    apt-get upgrade -y
+RUN echo "tsflags=nodocs" >> /etc/dnf/dnf.conf
 
-RUN apt-get install -y -qq --no-install-recommends \
-        apt-transport-https \
-        apt-utils \
+RUN dnf update -y && \
+    dnf clean all && \
+    rm -rf /var/cache/yum
+
+RUN dnf install -y epel-release && \
+	rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
+    dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm && \
+    dnf clean all && \
+    rm -rf /var/cache/yum
+
+RUN dnf -y swap curl-minimal curl && \
+	dnf install -y \
+        python3 \
+		python3-pip \
         ca-certificates \
-        curl \
         wget \
         git \
-        iputils-ping \
-        jq \
-        lsb-release \
-        software-properties-common && \
-    rm -rf /var/lib/apt/lists/*
+        iputils \
+        jq && \
+    dnf clean all && \
+    rm -rf /var/cache/yum
 
-RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash && \
-    rm -rf /var/lib/apt/lists/*
+RUN dnf install -y \
+		azure-cli \
+    	dotnet-sdk-6.0 && \
+    dnf clean all && \
+    rm -rf /var/cache/yum
 
-RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
-    dpkg -i packages-microsoft-prod.deb && \
-    apt-get update && \
-    apt-get install -y dotnet-sdk-6.0 && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/$TARGETARCH/kubectl" && \
 	install kubectl /usr/bin/kubectl && \
 	rm -rf kubectl
 
 RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
-	HELM_INSTALL_DIR=/usr/bin bash ./get_helm.sh && \
+	HELM_INSTALL_DIR=/usr/bin sh ./get_helm.sh && \
 	rm -rf get_helm.sh
 
 WORKDIR /azp
