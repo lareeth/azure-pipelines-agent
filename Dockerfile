@@ -35,6 +35,7 @@ RUN dnf install -y \
 RUN dnf install -y \
 		azure-cli \
     	dotnet-sdk-6.0 && \
+        dotnet-sdk-8.0 && \
     dnf clean all && \
     rm -rf /var/cache/yum
 
