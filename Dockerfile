@@ -22,7 +22,8 @@ RUN dnf -y swap curl-minimal curl && \
         wget \
         git \
         iputils \
-        jq && \
+        jq \
+	azure-cli && \
     dnf clean all && \
     rm -rf /var/cache/yum
 
@@ -32,8 +33,7 @@ RUN dnf install -y \
     dnf clean all && \
     rm -rf /var/cache/yum
 
-RUN dnf install -y \
-		azure-cli \
+RUN dnf install -y --disablerepo=packages-microsoft-com-prod \
     	dotnet-sdk-6.0 \
         dotnet-sdk-8.0 && \
     dnf clean all && \
