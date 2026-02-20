@@ -8,8 +8,7 @@ RUN dnf update -y && \
     dnf clean all && \
     rm -rf /var/cache/yum
 
-RUN /usr/bin/crb enable && \
-    dnf install -y epel-release && \
+RUN dnf install -y epel-release && \
 	rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
     dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm && \
     dnf clean all && \
