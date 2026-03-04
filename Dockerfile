@@ -14,8 +14,7 @@ RUN dnf install -y epel-release && \
     dnf clean all && \
     rm -rf /var/cache/yum
 
-RUN dnf -y swap curl-minimal curl && \
-	dnf install -y \
+RUN dnf install -y \
         python3 \
 		python3-pip \
         ca-certificates \
