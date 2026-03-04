@@ -22,6 +22,7 @@ RUN dnf install -y \
         git \
         iputils \
         jq \
+		openssl \
 	azure-cli && \
     dnf clean all && \
     rm -rf /var/cache/yum
