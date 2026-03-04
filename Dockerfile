@@ -1,4 +1,4 @@
-FROM rockylinux:9
+FROM rockylinux:10
 
 ARG TARGETARCH
 
@@ -9,8 +9,8 @@ RUN dnf update -y && \
     rm -rf /var/cache/yum
 
 RUN dnf install -y epel-release && \
-	rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
-    dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm && \
+	rpm --import https://packages.microsoft.com/rhel/10/prod/repodata/repomd.xml.key && \
+    dnf install -y https://packages.microsoft.com/config/rhel/10/packages-microsoft-prod.rpm && \
     dnf clean all && \
     rm -rf /var/cache/yum
 
