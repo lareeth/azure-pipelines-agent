@@ -58,6 +58,7 @@ RUN dnf install -y \
 		php83-php-pecl-xdebug \
 		php83-php-gd \
 		php83-php-imagick \
+		php83-php-pgsql \
 		php83-php-mysqlnd && \
     dnf clean all && \
     rm -rf /var/cache/yum
