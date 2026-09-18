@@ -11,6 +11,7 @@ RUN dnf update -y && \
 RUN dnf install -y epel-release && \
 	rpm --import https://packages.microsoft.com/rhel/10/prod/repodata/repomd.xml.key && \
     dnf install -y https://packages.microsoft.com/config/rhel/10/packages-microsoft-prod.rpm && \
+	dnf install -y https://rpms.remirepo.net/enterprise/remi-release-10.rpm && \
     dnf clean all && \
     rm -rf /var/cache/yum
 
