@@ -11,6 +11,7 @@ RUN dnf update -y && \
 RUN dnf install -y epel-release && \
 	rpm --import https://packages.microsoft.com/rhel/10/prod/repodata/repomd.xml.key && \
     dnf install -y https://packages.microsoft.com/config/rhel/10/packages-microsoft-prod.rpm && \
+	dnf install -y https://rpms.remirepo.net/enterprise/remi-release-10.rpm && \
     dnf clean all && \
     rm -rf /var/cache/yum
 
@@ -38,6 +39,23 @@ RUN dnf install -y \
 RUN dnf install -y --disablerepo=packages-microsoft-com-prod \
         dotnet-sdk-8.0 \
 		dotnet-sdk-10.0 && \
+    dnf clean all && \
+    rm -rf /var/cache/yum
+
+RUN dnf install -y \
+		php83 \
+		php83-php-curl \
+		php83-php-bcmath \
+		php83-php-xml \
+		php83-php-zip \
+		php83-php-mbstring \
+		php83-php-pear \
+		php83-php-json \
+		php83-php-pdo \
+		php83-php-pecl-xdebug \
+		php83-php-gd \
+		php83-php-imagick \
+		php83-php-mysqlnd && \
     dnf clean all && \
     rm -rf /var/cache/yum
 
