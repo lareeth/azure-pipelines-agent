@@ -42,6 +42,23 @@ RUN dnf install -y --disablerepo=packages-microsoft-com-prod \
     dnf clean all && \
     rm -rf /var/cache/yum
 
+RUN dnf install -y \
+		php83 \
+		php83-php-curl \
+		php83-php-bcmath \
+		php83-php-xml \
+		php83-php-zip \
+		php83-php-mbstring \
+		php83-php-pear \
+		php83-php-json \
+		php83-php-pdo \
+		php83-php-pecl-xdebug \
+		php83-php-gd \
+		php83-php-imagick \
+		php83-php-mysqlnd && \
+    dnf clean all && \
+    rm -rf /var/cache/yum
+
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/$TARGETARCH/kubectl" && \
 	install kubectl /usr/bin/kubectl && \
 	rm -rf kubectl
