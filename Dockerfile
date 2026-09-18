@@ -42,6 +42,9 @@ RUN dnf install -y --disablerepo=packages-microsoft-com-prod \
     dnf clean all && \
     rm -rf /var/cache/yum
 
+RUN curl -o /usr/bin/composer https://getcomposer.org/download/latest-stable/composer.phar && \
+    chmod 0755 /usr/bin/composer
+
 RUN dnf install -y \
 		php83 \
 		php83-php-curl \
