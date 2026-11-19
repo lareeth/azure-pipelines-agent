@@ -20,7 +20,31 @@ if [ -z "$AZP_URL" ]; then
   exit 1
 fi
 
-if [ -z "$AZP_TOKEN_FILE" ]; then
+if [ "$AZP_WORKLOAD_IDENTITY" == "true" ]; then
+  if [ -z "$AZURE_TENANT_ID" ]; then
+    echo 1>&2 "error: missing AZURE_TENANT_ID environment variable"
+    exit 1
+  fi
+
+  if [ -z "$AZURE_CLIENT_ID" ]; then
+    echo 1>&2 "error: missing AZURE_CLIENT_ID environment variable"
+    exit 1
+  fi
+
+  AZP_TOKEN_FILE=/azp/.token
+  # Exchange the workload identity federated token for an Entra token for Azure DevOps
+  refresh_token() {
+    local response
+    response=$(curl -sSf -X POST "https://login.microsoftonline.com/${AZURE_TENANT_ID}/oauth2/v2.0/token" \
+      -d "client_id=${AZURE_CLIENT_ID}" \
+      -d "scope=499b84ac-1321-427f-aa17-267ca6975798/.default" \
+      -d "grant_type=client_credentials" \
+      -d "client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer" \
+      --data-urlencode "client_assertion@${AZURE_FEDERATED_TOKEN_FILE}") || return 1
+    echo "$response" | jq -r '.access_token' > "$AZP_TOKEN_FILE"
+  }
+  refresh_token
+elif [ -z "$AZP_TOKEN_FILE" ]; then
   if [ -z "$AZP_TOKEN" ]; then
     echo 1>&2 "error: missing AZP_TOKEN environment variable"
     exit 1
@@ -45,6 +69,9 @@ cleanup() {
     # If the agent has some running jobs, the configuration removal process will fail.
     # So, give it some time to finish the job.
     while true; do
+      # The Entra token from startup will likely have expired by now
+      if [ "$AZP_WORKLOAD_IDENTITY" == "true" ]; then refresh_token || true; fi
+
       ./config.sh remove --unattended --auth PAT --token $(cat "$AZP_TOKEN_FILE") && break
 
       echo "Retrying in 30 seconds..."
